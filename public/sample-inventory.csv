@@ -1,0 +1,9 @@
+id,brand,model,cpuFamily,cpuModel,ramGb,ssdGb,condition,warrantyMonths,available,unitCost,serials
+"INV-001","ASUS","Vivobook Pro 16","AMD Ryzen 9","8945HS","32","1000","New","12","2","108000","AS-VP16-1001|AS-VP16-1002"
+"INV-002","Lenovo","LOQ 15","AMD Ryzen 7","8845HS","32","2000","New","12","2","83000","LN-LOQ-2002|LN-LOQ-2003"
+"INV-003","Dell","Latitude 5420","Intel Core i5","1145G7","16","512","Refurbished","6","5","26500","DL-5420-3001|DL-5420-3002|DL-5420-3003|DL-5420-3004|DL-5420-3005"
+"INV-004","HP","EliteBook 840 G8","Intel Core i7","1165G7","32","1000","Refurbished","6","3","38000","HP-840-4001|HP-840-4002|HP-840-4003"
+"INV-005","Lenovo","ThinkPad E14","Intel Core i5","1335U","16","512","New","12","4","54500","LN-E14-5001|LN-E14-5002|LN-E14-5003|LN-E14-5004"
+"INV-006","Apple","MacBook Air 13","Apple M3","M3 8-core","16","512","New","12","1","103000","AP-M3-6002"
+"INV-007","ASUS","TUF Gaming A15","AMD Ryzen 9","7940HS","16","1000","New","12","1","92000","AS-TUF-7001"
+"INV-008","HP","ProBook 450 G10","Intel Core i7","1355U","16","1000","New","12","2","73500","HP-450-8002|HP-450-8003"

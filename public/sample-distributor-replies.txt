@@ -1,0 +1,60 @@
+SOURCEDESK — FICTIONAL DISTRIBUTOR REPLIES
+
+These sample Studio North messages are not real quotes or communications
+from real suppliers. No WhatsApp message or email was sent. Review pasted
+replies with the sample parser or manual fields; resolve uncertainties.
+
+CUSTOMER REQUIREMENT
+Company: Studio North
+Contact: Aarav Mehta
+Quantity: 2 laptops
+AMD Ryzen 9; 32 GB RAM; 2 TB SSD; new; 12 months warranty.
+Delivery within 5 days. Budget per laptop: INR 145000 before GST.
+
+OFR-001 — Vertex Distribution — WhatsApp (fictional)
+Model: ASUS TUF Gaming A15
+AMD Ryzen 9 7940HS; 16 GB RAM; 1 TB SSD; new; 12 months warranty.
+Unit price: INR 99000 + GST 18%; freight: INR 600 for the shipment.
+Available: 4 units. Delivery in 2 days. Price valid for 7 days from enquiry.
+Price covers 16 GB RAM and 1 TB SSD. A 32 GB / 2 TB upgrade is not included.
+
+Review: Lowest advertised price, but RAM and SSD miss the requirement.
+
+OFR-002 — Prime IT Wholesale — Email (fictional)
+Model: ASUS Vivobook Pro 16
+AMD Ryzen 9 8945HS; 32 GB RAM; 2 TB SSD; new; 12 months warranty.
+Unit price: INR 119500 + GST 18%; freight included.
+Available: 3 units. Delivery in 9 days. Price valid for 7 days from enquiry.
+No earlier stock is confirmed.
+
+Review: Matches the configuration but misses the five-day deadline.
+
+OFR-003 — Redwood IT Partners — WhatsApp (fictional)
+Model: ASUS Vivobook Pro 16
+AMD Ryzen 9 8945HS; 32 GB RAM; 2 TB SSD; new; 12 months warranty.
+Unit price: INR 123000 + GST 18%; freight: INR 1000 for the shipment.
+Available: 5 units. Delivery in 3 days. Price valid for 7 days from enquiry.
+The requested two-device configuration and delivery timing are confirmed.
+
+Review: Meets the sample configuration, quantity and delivery deadline.
+Two laptops have a pre-tax sourcing cost of INR 247000 including freight,
+or INR 123500 each. Distributor availability is not owned stock.
+
+OFR-004 — Metro Tech Supply — Email (fictional)
+Model: ASUS Vivobook Pro 16
+AMD Ryzen 9 8945HS; 32 GB RAM; 1 TB SSD; new; 12 months warranty.
+Unit price: INR 111000 + GST 18%; freight: INR 800 for the shipment.
+Available: 2 units. Delivery in 4 days. Price valid for 7 days from enquiry.
+A 2 TB upgrade may be possible, but compatibility, warranty and price
+are unconfirmed. This quotation covers the 1 TB variant only.
+
+Review: SSD misses the requirement. Do not assume the upgrade is compatible,
+included in the price, or approved by the customer.
+
+NOTES
+- All amounts are INR. Device prices are per unit and exclude GST.
+- Freight is the total shipment cost, not a per-device cost.
+- Stock and validity are fictional; reconfirm before any real sale.
+- Seed offer validity is relative to the time the demo state is created.
+- These examples make GST assumptions explicit for parser practice;
+  original replies in the seeded workspace still require review.
