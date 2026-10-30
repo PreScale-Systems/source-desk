@@ -6,7 +6,7 @@ This MVP uses fictional sample data and browser-local storage. It is a single-us
 
 ## Run locally
 
-Use **Node.js 24 LTS** and npm. From this directory:
+Use **Node.js 22.13 or newer** (24 LTS recommended) and npm. From this directory:
 
 ```sh
 npm ci
@@ -53,24 +53,23 @@ The demo works without Tally using a clearly identified sample invoice reference
 
 Reference files: [`public/sample-inventory.csv`](public/sample-inventory.csv) and [`public/sample-distributor-replies.txt`](public/sample-distributor-replies.txt). CSV is download/reference only; import is not implemented. SSD capacities use decimal GB: 1 TB = 1000 GB. CSV serial numbers are separated by `|`.
 
-## Optional Nemotron extraction on Nebius
+## Nebius Token Factory & NVIDIA Nemotron
 
-Manual entry and the labelled **sample parser** work without a key. The sample parser uses deterministic rules, not AI inference.
+SourceDesk uses one model for one job: turning messy enquiry and supplier text into a structured draft that a person reviews.
 
-Copy `.env.example` to an ignored `.env.local` file and set:
+- **Model:** `nvidia/Nemotron-3_5-Lightning`, served by Nebius Token Factory (OpenAI-compatible chat completions, JSON mode, reasoning disabled for extraction). Override with `NEBIUS_MODEL`.
+- **Where it is called:** `lib/nebius.ts` is the Token Factory client (bounded request and response sizes, 30 s timeout, provider errors mapped to safe messages). `app/api/ai/route.ts` is the only caller: it validates the request, sends the extraction prompt, and validates the model output against the Zod schemas in `lib/intake.ts` before anything reaches the browser.
+- **What the model may not do:** approve substitutions, invent stock, set prices, or create invoices. Code performs matching, arithmetic, reservations and dispatch checks. "AMD 9" stays ambiguous and becomes a clarification question.
+- **Live check:** `npm run verify:nebius` performs two real inference calls (lead and supplier notes) and asserts the extracted fields. The UI labels every AI result with the model name, for example "Extracted with nvidia/Nemotron-3_5-Lightning on Nebius Token Factory".
+
+Setup: copy `.env.example` to an ignored `.env.local` and set:
 
 ```dotenv
 NEBIUS_API_KEY=your_token_factory_key
 NEBIUS_MODEL=nvidia/Nemotron-3_5-Lightning
 ```
 
-Restart the server after environment changes. Select a Nemotron model available in your Token Factory account if necessary. The server route calls `https://api.tokenfactory.nebius.com/v1/chat/completions`. Keep the key on the server; never put it in a `NEXT_PUBLIC_` variable, browser storage or source control.
-
-Extraction returns validated draft fields and clarification questions. Staff review the result before saving. “AMD 9” stays ambiguous; the model cannot approve substitutions, invent stock or set prices. Code performs matching, arithmetic, reservations and dispatch checks.
-
-**Hackathon status:** keyless sample mode does not establish compliance with the Nemotron-on-Nebius requirement. Complete and demonstrate a genuine inference call before claiming the integration works or the submission meets that requirement. Automated tests do not claim a live inference call.
-
-Keep this demo local. Real team use needs authentication, permissions, request quotas, shared storage, backups and operational integrations.
+Restart the server after environment changes. Manual entry and the labelled **sample parser** (deterministic rules, no inference) work without a key. Keep the key on the server; never put it in a `NEXT_PUBLIC_` variable, browser storage or source control. Before public hosting with a provider key, add authentication and request quotas.
 
 ## Tally handoff
 
