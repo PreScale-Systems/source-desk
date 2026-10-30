@@ -170,3 +170,40 @@ test("API validates provider output, preserves source text and retains the ambig
     else process.env.NEBIUS_MODEL = previousModel;
   }
 });
+
+test("API maps provider failures to safe statuses: 413 body, 429 busy, length cut-off, non-JSON content, timeout", async () => {
+  const previousKey = process.env.NEBIUS_API_KEY;
+  const originalFetch = globalThis.fetch;
+  process.env.NEBIUS_API_KEY = "test-key-not-a-real-secret";
+  const expectError = async (response: Response, status: number, fragment: string) => {
+    assert.equal(response.status, status);
+    const payload = await response.json() as { error: string };
+    assert.ok(payload.error.includes(fragment), `${status}: ${payload.error}`);
+  };
+  try {
+    const oversized = new Request("https://example.test/api/ai", { method: "POST", headers: { "Content-Type": "application/json" }, body: `{"kind":"lead","text":"${"x".repeat(70_000)}"}` });
+    await expectError(await POST(oversized), 413, "too large");
+    const broken = new Request("https://example.test/api/ai", { method: "POST", headers: { "Content-Type": "application/json" }, body: "{not json" });
+    await expectError(await POST(broken), 400, "valid JSON");
+    await expectError(await POST(request({ kind: "lead", text: "   " })), 400, "kind");
+
+    globalThis.fetch = async () => new Response("slow down", { status: 429 });
+    await expectError(await POST(request({ kind: "lead", text: "A laptop" })), 502, "busy");
+
+    globalThis.fetch = async () => Response.json({ choices: [{ finish_reason: "length", message: { content: '{"data":' } }] });
+    await expectError(await POST(request({ kind: "lead", text: "A laptop" })), 502, "incomplete");
+
+    globalThis.fetch = async () => Response.json({ choices: [{ finish_reason: "stop", message: { content: "not json at all" } }] });
+    await expectError(await POST(request({ kind: "lead", text: "A laptop" })), 502, "invalid result");
+
+    globalThis.fetch = async () => { throw Object.assign(new Error("timed out"), { name: "TimeoutError" }); };
+    await expectError(await POST(request({ kind: "lead", text: "A laptop" })), 504, "timed out");
+
+    globalThis.fetch = async () => { throw new TypeError("fetch failed"); };
+    await expectError(await POST(request({ kind: "lead", text: "A laptop" })), 502, "unavailable");
+  } finally {
+    globalThis.fetch = originalFetch;
+    if (previousKey === undefined) delete process.env.NEBIUS_API_KEY;
+    else process.env.NEBIUS_API_KEY = previousKey;
+  }
+});

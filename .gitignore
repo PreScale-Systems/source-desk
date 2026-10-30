@@ -48,3 +48,5 @@ yarn-error.log*
 
 # Tool state
 /.omc/
+/test-results/
+/playwright-report/
