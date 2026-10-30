@@ -59,9 +59,9 @@ export async function POST(request: Request): Promise<Response> {
   if (input.kind === "lead") {
     const parsed = z.object({ data: leadIntakeSchema, clarifications: clarificationsSchema }).strict().safeParse(raw);
     if (!parsed.success) return json({ error: "Nemotron returned an invalid result. Review the note manually." }, 502);
-    return json(enforceProcessorClarification(input.text, parsed.data.data, parsed.data.clarifications));
+    return json({ ...enforceProcessorClarification(input.text, parsed.data.data, parsed.data.clarifications), model: completion.model });
   }
   const parsed = z.object({ data: offerIntakeSchema, clarifications: clarificationsSchema }).strict().safeParse(raw);
   if (!parsed.success) return json({ error: "Nemotron returned an invalid result. Review the note manually." }, 502);
-  return json(enforceProcessorClarification(input.text, { ...parsed.data.data, sourceText: input.text }, parsed.data.clarifications));
+  return json({ ...enforceProcessorClarification(input.text, { ...parsed.data.data, sourceText: input.text }, parsed.data.clarifications), model: completion.model });
 }

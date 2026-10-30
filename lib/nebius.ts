@@ -42,7 +42,7 @@ const completionSchema = z.object({
 });
 
 export type CompletionResult =
-  | { ok: true; content: string }
+  | { ok: true; content: string; model: string }
   | { ok: false; status: 502 | 503 | 504; error: string };
 
 /** One JSON-mode chat completion. Never throws; never returns the key. */
@@ -85,7 +85,7 @@ export async function completeJson(system: string, user: string): Promise<Comple
     if (!payload.success || payload.data.choices[0].finish_reason === "length") {
       return { ok: false, status: 502, error: "Nemotron returned an incomplete result. Try a shorter note or use manual entry." };
     }
-    return { ok: true, content: payload.data.choices[0].message.content };
+    return { ok: true, content: payload.data.choices[0].message.content, model };
   } catch (error) {
     const timedOut = error instanceof Error && (error.name === "TimeoutError" || error.name === "AbortError");
     return {

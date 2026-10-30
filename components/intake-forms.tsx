@@ -20,18 +20,18 @@ const value = (input: number | null | undefined) => input === null || input === 
 const deviceCondition = (input: string): "" | Condition => input === "new" ? "New" : input === "refurbished" ? "Refurbished" : "";
 const errorMessage = (error: unknown) => error instanceof Error ? error.message : "Could not read the note. Review the fields manually.";
 
-async function extractLead(text: string): Promise<IntakeResult<LeadIntake>> {
+async function extractLead(text: string): Promise<IntakeResult<LeadIntake> & { model?: string }> {
   const response = await fetch("/api/ai", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ kind: "lead", text }) });
   const payload: unknown = await response.json();
   if (!response.ok) throw new Error(z.object({ error: z.string() }).safeParse(payload).data?.error || "Nemotron could not process the note.");
-  return z.object({ data: leadIntakeSchema, clarifications: clarificationsSchema, mode: z.literal("nemotron") }).parse(payload);
+  return z.object({ data: leadIntakeSchema, clarifications: clarificationsSchema, mode: z.literal("nemotron"), model: z.string().optional() }).parse(payload);
 }
 
-async function extractOffer(text: string): Promise<IntakeResult<OfferIntake>> {
+async function extractOffer(text: string): Promise<IntakeResult<OfferIntake> & { model?: string }> {
   const response = await fetch("/api/ai", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ kind: "offer", text }) });
   const payload: unknown = await response.json();
   if (!response.ok) throw new Error(z.object({ error: z.string() }).safeParse(payload).data?.error || "Nemotron could not process the note.");
-  const result = z.object({ data: offerIntakeSchema.extend({ sourceText: z.string() }), clarifications: clarificationsSchema, mode: z.literal("nemotron") }).parse(payload);
+  const result = z.object({ data: offerIntakeSchema.extend({ sourceText: z.string() }), clarifications: clarificationsSchema, mode: z.literal("nemotron"), model: z.string().optional() }).parse(payload);
   return { ...result, data: { ...result.data, sourceText: text } };
 }
 
@@ -107,7 +107,7 @@ export function NewLeadForm({ onSave, onCancel }: { onSave: (input: LeadInput) =
       const data = result.data;
       setFields({ company: data.company, contact: data.contact, email: data.email, phone: data.phone, quantity: value(data.quantity), cpuFamily: data.requirements.cpuFamily, ramGb: value(data.requirements.ramGb), ssdGb: value(data.requirements.ssdGb), condition: deviceCondition(data.requirements.condition), warrantyMonths: value(data.requirements.warrantyMonths), budget: value(data.budget), maxDeliveryDays: value(data.maxDeliveryDays), address: data.address });
       setClarifications(result.clarifications);
-      setMode(method === "sample-rules" ? "Extracted with sample rules · no AI inference" : "Extracted with Nemotron on Nebius Token Factory");
+      setMode(method === "sample-rules" ? "Extracted with sample rules · no AI inference" : `Extracted with ${"model" in result && result.model ? result.model : "Nemotron"} on Nebius Token Factory`);
     } catch (cause) { setError(errorMessage(cause)); }
     finally { setBusy(false); }
   }
@@ -169,7 +169,7 @@ export function NewOfferForm({ state, leadId, onSave, onCancel }: { state: Sales
       setFields((current) => ({ ...current, model: data.model, cpuFamily: data.cpuFamily, cpuModel: data.cpuModel, ramGb: value(data.ramGb), ssdGb: value(data.ssdGb), condition: deviceCondition(data.condition), warrantyMonths: value(data.warrantyMonths), unitCost: value(normalizedCost), freight: value(data.freight), deliveryDays: value(data.deliveryDays), quantityAvailable: value(data.quantityAvailable) }));
       setTaxNote(data.taxIncluded === true && data.gstRate !== null && normalizedCost !== null ? `Supplier price includes ${data.gstRate}% GST. Unit cost was converted to INR ${normalizedCost.toLocaleString("en-IN")} excluding GST. Confirm freight covers the whole order.` : normalizedCost === null ? "Tax treatment is incomplete. Confirm and enter the unit cost excluding GST manually; the supplier price has not been assumed to exclude tax." : "Supplier price explicitly excludes GST. Confirm this unit cost and the freight charge for the complete order.");
       setClarifications(result.clarifications);
-      setMode(method === "sample-rules" ? "Extracted with sample rules · no AI inference" : "Extracted with Nemotron on Nebius Token Factory");
+      setMode(method === "sample-rules" ? "Extracted with sample rules · no AI inference" : `Extracted with ${"model" in result && result.model ? result.model : "Nemotron"} on Nebius Token Factory`);
     } catch (cause) { setError(errorMessage(cause)); }
     finally { setBusy(false); }
   }
