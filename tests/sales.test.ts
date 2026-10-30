@@ -6,7 +6,7 @@ import type { SalesState } from '../lib/sales.ts';
 const NOW = '2026-10-27T10:00:00.000Z';
 const seed = () => createSeedState(NOW);
 function draftSupplier(state = seed()) { state = createQuotation(state, { leadId: 'LD-001', sourceType: 'supplier', sourceId: 'OFR-003', salePrice: 140000 }, NOW); return { state, quoteId: state.quotations[0].id }; }
-function acceptedSupplier() { let { state, quoteId } = draftSupplier(); state = markQuoteSent(state, quoteId, NOW); state = acceptQuotation(state, quoteId, NOW); return { state, quoteId, orderId: state.orders[0].id }; }
+function acceptedSupplier() { let { state } = draftSupplier(); const quoteId = state.quotations[0].id; state = markQuoteSent(state, quoteId, NOW); state = acceptQuotation(state, quoteId, NOW); return { state, quoteId, orderId: state.orders[0].id }; }
 function addInventoryLead(state: SalesState, quantity = 2) { const base = state.leads.find(row => row.id === 'LD-004')!; state = createLead(state, { ...base, company: 'Test Workshop', contact: 'Test Buyer', quantity, requirements: { ...base.requirements } }, NOW); return { state, leadId: state.leads[0].id }; }
 
 test('sample data covers a full pipeline with no exact primary inventory match', () => {
@@ -62,7 +62,7 @@ test('expired supplier offers block new quotations and later acceptance', () => 
 });
 
 test('acceptance must follow sending and duplicate acceptance does not reserve twice', () => {
-  let { state, quoteId } = draftSupplier();
+  let { state } = draftSupplier(); const quoteId = state.quotations[0].id;
   assert.throws(() => acceptQuotation(state, quoteId, NOW), /sent/);
   state = acceptQuotation(markQuoteSent(state, quoteId, NOW), quoteId, NOW);
   const count = state.orders.length;
@@ -104,7 +104,7 @@ test('physical receipt enforces quantity, case-insensitive uniqueness and global
 });
 
 test('dispatch requires physical receipt, four checks, actual invoice and tracking', () => {
-  let { state, orderId } = acceptedSupplier();
+  let { state } = acceptedSupplier(); const orderId = state.orders[0].id;
   assert.throws(() => markPacked(state, orderId, NOW), /physical devices/);
   assert.throws(() => dispatchOrder(state, orderId, NOW), /packing checks/);
   state = receiveSupplierOrder(state, orderId, ['SUP-NEW-1', 'SUP-NEW-2'], NOW);

@@ -4,15 +4,15 @@ import { useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import { FileText, Sparkles } from "lucide-react";
 import { z } from "zod";
-import type { Condition, LeadInput, OfferInput, SalesState } from "../lib/sales";
+import type { Condition, LeadInput, OfferInput, SalesState } from "@/lib/sales";
 import {
   clarificationsSchema,
   leadIntakeSchema,
   offerIntakeSchema,
   parseLeadNote,
   parseOfferNote,
-} from "../lib/intake";
-import type { IntakeResult, LeadIntake, OfferIntake } from "../lib/intake";
+} from "@/lib/intake";
+import type { IntakeResult, LeadIntake, OfferIntake } from "@/lib/intake";
 
 const SAMPLE_LEAD = "Company: Meridian Design Studio; Contact: Ananya Rao; Email: ananya@example.test; Phone: +91 98765 43210; Qty: 2; AMD Ryzen 9; 32GB RAM; 2TB SSD; new; 1 year warranty; budget per unit: INR 115,000; delivery within 5 days; Address: 42 Sample Business Park, Pune 411001";
 const SAMPLE_OFFER = "Model: ASUS Vivobook Pro 15; AMD Ryzen 9 7940HS; 32GB RAM; 2TB SSD; new; 1 year warranty; price: INR 89,500 + 18% GST; freight: INR 800; delivery in 3 days; available: 4";

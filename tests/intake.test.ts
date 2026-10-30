@@ -137,6 +137,7 @@ test("API validates provider output, preserves source text and retains the ambig
     assert.equal(url, "https://api.tokenfactory.nebius.com/v1/chat/completions");
     const body = JSON.parse(String(options?.body));
     assert.equal(body.model, "test-nemotron-model");
+    assert.deepEqual(body.chat_template_kwargs, { enable_thinking: false });
     assert.equal(body.messages[1].content, source);
     assert.equal(options?.headers && new Headers(options.headers).get("Authorization"), "Bearer test-key-not-a-real-secret");
     return Response.json({ choices: [{ finish_reason: "stop", message: { content: JSON.stringify({ data: { ...modelData, cpuFamily: "AMD Ryzen 9", cpuModel: "Invented" }, clarifications: [] }) } }] });

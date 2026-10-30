@@ -87,19 +87,40 @@ A stable order-based `REMOTEID` and reference assist reconciliation. **They do n
 ```sh
 node --experimental-strip-types --test tests/*.test.ts
 npm run lint
+npm run typecheck
 npm run build
 ```
 
 Tests cover matching, quotation snapshots, reservations, receipt/dispatch gates, extraction validation, XML escaping, ledger checks and balanced accounting entries. The 30–50% administrative-cost reduction is a target to validate with a reseller, not a measured result. Measure complete enquiries including review/corrections, and distinguish released capacity from cash savings.
 
+## Demo release checks
+
+- Run all four verification commands above. Storage tests also cover malformed records, broken references, unavailable storage and quota failures.
+- If saved browser data is unreadable, the app leaves it untouched and opens recovery. Download the original data before explicitly resetting the sample workspace. A recovery download preserves the original stored strings; it is not an automatic repair or import.
+- Rehearse the Studio North journey in Chrome, including persistence after reload and the printable/downloaded documents.
+- Configure `NEBIUS_API_KEY` in ignored `.env.local`, restart the server, and run `npm run verify:nebius` to verify a real lead extraction and a real supplier extraction (two provider calls using fictional notes). Record the successful inference in the submission demo; sample rules and mocked tests do not prove live inference.
+- Use fictional records for recordings. Describe Tally as an unvalidated accounting export and the administrative saving as an unmeasured target.
+- Before public hosting with a provider key, add authentication and request quotas. The current extraction route is intended for local demonstration.
+
+Verified locally on 28 October 2026: 38 automated tests, lint, typecheck and the production build passed. Chrome verification covered sample enquiry extraction and creation, Studio North offer comparison, a ₹139,000/unit quotation (₹328,040 including sample GST), acceptance, receipt of two unique fictional serials, Tally XML download, packing, dispatch and persistence after reload. Live Nemotron lead and supplier extraction checks also passed using fictional notes, including explicit supplier GST terms. Reasoning output is disabled for extraction to preserve the JSON output budget. Earlier invalid provider output was rejected by validation; staff review remains required. Safari A4 print previews were checked for all three document types; print spacing was tightened to avoid an orphaned second page on the sample invoice. No actual Tally import was verified.
+
 ## Source map
 
-- `app/`: interface, styles and server-side AI extraction route.
-- `lib/sales.ts`: domain records, sample data, matching, totals and transitions.
-- `lib/intake.ts`: extraction contracts and limited sample parsers.
-- `lib/documents.ts`: quotations, invoice drafts, dispatch sheets and Tally XML.
-- `tests/`: domain, extraction and document checks.
+- `app/`: Next.js App Router. `page.tsx` is the workspace UI; `api/ai/route.ts` is the server-side extraction endpoint.
+- `components/`: client components shared by screens (intake forms).
+- `lib/`: framework-free domain code, unit-tested under Node.
+  - `sales.ts`: records, sample data, matching, totals and state transitions.
+  - `intake.ts`: extraction contracts and the deterministic sample parsers.
+  - `documents.ts`: quotations, invoice drafts, dispatch sheets and Tally XML.
+  - `workspace-storage.ts`: validated browser-storage persistence.
+  - `nebius.ts`: Nebius Token Factory client (Nemotron, JSON mode, bounded responses).
+- `worker/`: Cloudflare Worker entry and the Sites connector runtime binding.
+- `scripts/`: build, install and Sites preview helpers; `verify-nebius.ts` runs a live extraction check.
+- `tests/`: domain, extraction, document and storage checks (`node --test`).
 - `public/`: sample reference files and static assets.
-- `scripts/`: maintained build and Sites runtime helpers.
 
 SourceDesk's authored code is MIT licensed. Dependencies and vendored files retain their respective licenses.
+
+## Standalone sample demo
+
+In the downloaded ZIP, open `SourceDesk-demo.html` at the top level. In this development checkout, open `outputs/SourceDesk-demo.html` in a browser to try the complete sample workflow without a server. Generate it with `node scripts/build-demo.mjs` after installing dependencies. The standalone bundle does not call Nebius; use Sample rules. Optional real Nemotron extraction requires the full app server and `NEBIUS_API_KEY`. Browser-local storage availability for file URLs depends on the browser.
